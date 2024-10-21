@@ -4,8 +4,12 @@ from abc import ABC, abstractmethod
 class Parser(ABC):
     """Абстрактный класс для работы с API сервисов вакансий"""
 
-    def __init__(self, file_worker):
-        self.file_worker = file_worker
+    @abstractmethod
+    def connect(self):
+        """
+        Метод для подключения к API
+        """
+        pass
 
     @abstractmethod
     def load_vacancies(self, keyword: str):
