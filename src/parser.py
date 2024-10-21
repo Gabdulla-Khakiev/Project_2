@@ -14,10 +14,3 @@ class Parser(ABC):
         :param keyword: Ключевое слово для поиска вакансий
         """
         pass
-
-    @abstractmethod
-    def save_vacancies(self):
-        """
-        Метод для сохранения загруженных вакансий в файл.
-        """
-        pass
