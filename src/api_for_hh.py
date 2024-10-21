@@ -1,5 +1,6 @@
 import requests
 from src.parser import Parser
+from pprint import pprint
 
 
 class HH(Parser):
@@ -53,4 +54,4 @@ class HH(Parser):
 if __name__ == "__main__":
     hh = HH()
     hh.load_vacancies("developer")
-    print(hh.vacancies[-1])
+    pprint(hh.vacancies[1])
