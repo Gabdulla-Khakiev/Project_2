@@ -54,4 +54,4 @@ class HH(Parser):
 if __name__ == "__main__":
     hh = HH()
     hh.load_vacancies("developer")
-    pprint(hh.vacancies[1])
+    print(hh.vacancies[1])

@@ -24,8 +24,7 @@ class Vacancy:
     def validate_description(vacancy):
         if (vacancy.get('snippet').get('requirement') is not None or
                 vacancy.get('snippet') is not None):
-            description = (vacancy.get('snippet').get('requirement') +
-                           vacancy.get('snippet').get('responsibility'))
+            description = f"{vacancy.get('snippet').get('requirement')} {vacancy.get('snippet').get('responsibility')}"
             return description
         else:
             return 'Без описания'
