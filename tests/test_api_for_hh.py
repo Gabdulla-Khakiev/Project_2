@@ -1,6 +1,3 @@
-from src.api_for_hh import HH
-
-
 def test_api_connection(vacancy_from_hh):
     assert vacancy_from_hh.connect() == True
 
