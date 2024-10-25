@@ -9,7 +9,7 @@ class HH(Parser):
     def __init__(self):
         self.url = 'https://api.hh.ru/vacancies'
         self.headers = {'User-Agent': 'HH-User-Agent'}
-        self.params = {'text': '', 'page': 0, 'per_page': 100}
+        self.params = {'text': '', 'area': 113, 'page': 0, 'per_page': 100}
         self.vacancies = []
 
     def connect(self):

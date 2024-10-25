@@ -38,11 +38,10 @@ class Vacancy:
             return "Зарплата не указана"
 
         if vacancy.get('salary').get('to') == 0 or vacancy.get('salary').get('to') is None:
-            salary = f"{vacancy.get('salary').get('from')} {vacancy.get('salary').get('currency')}"
+            salary = f"{vacancy.get('salary').get('from')}"
         else:
-            salary = (f"{vacancy.get('salary').get('from')} - {vacancy.get('salary').get('to')}"
-                      f" {vacancy.get('salary').get('currency')}")
-        return salary
+            salary = f"{vacancy.get('salary').get('from')} - {vacancy.get('salary').get('to')}"
+        return int(salary)
 
     def __str__(self):
         return (f"Вакансия: {self.title}\n"
