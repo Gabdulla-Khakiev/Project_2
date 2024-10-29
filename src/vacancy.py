@@ -54,20 +54,24 @@ class Vacancy:
         """
         Проверка равенства вакансий по зарплате.
         """
-        if not isinstance(other, Vacancy):
-            raise TypeError("Сравнивать можно только объекты класса Vacancy.")
+        if not isinstance(self, Vacancy):
+            return other.salary
+        elif not isinstance(other, Vacancy):
+            return self.salary
         if self.salary == "Зарплата не указана":
             self.salary = 0
         elif other.salary == "Зарплата не указана":
             other.salary = 0
-        return int(self.salary) == int(other.salary)
+        return self.salary == other.salary
 
     def __lt__(self, other):
         """
         Сравнение вакансий по зарплате.
         """
-        if not isinstance(other, Vacancy):
-            raise TypeError("Сравнивать можно только объекты класса Vacancy.")
+        if not isinstance(self, Vacancy):
+            return other.salary
+        elif not isinstance(other, Vacancy):
+            return self.salary
         if self.salary == "Зарплата не указана":
             self.salary = 0
         elif other.salary == "Зарплата не указана":
@@ -78,8 +82,10 @@ class Vacancy:
         """
         Сравнение вакансий по зарплате.
         """
-        if not isinstance(other, Vacancy):
-            raise TypeError("Сравнивать можно только объекты класса Vacancy.")
+        if not isinstance(self, Vacancy):
+            return other.salary
+        elif not isinstance(other, Vacancy):
+            return self.salary
         if self.salary == "Зарплата не указана":
             self.salary = 0
         elif other.salary == "Зарплата не указана":
@@ -90,8 +96,10 @@ class Vacancy:
         """
         Сравнение вакансий по зарплате.
         """
-        if not isinstance(other, Vacancy):
-            raise TypeError("Сравнивать можно только объекты класса Vacancy.")
+        if not isinstance(self, Vacancy):
+            return other.salary
+        elif not isinstance(other, Vacancy):
+            return self.salary
         if self.salary == "Зарплата не указана":
             self.salary = 0
         elif other.salary == "Зарплата не указана":
@@ -102,8 +110,10 @@ class Vacancy:
         """
         Сравнение вакансий по зарплате.
         """
-        if not isinstance(other, Vacancy):
-            raise TypeError("Сравнивать можно только объекты класса Vacancy.")
+        if not isinstance(self, Vacancy):
+            return other.salary
+        elif not isinstance(other, Vacancy):
+            return self.salary
         if self.salary == "Зарплата не указана":
             self.salary = 0
         elif other.salary == "Зарплата не указана":
