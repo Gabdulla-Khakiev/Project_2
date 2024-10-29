@@ -1,3 +1,5 @@
+import re
+
 from src.api_for_hh import HH
 
 
@@ -30,17 +32,28 @@ class Vacancy:
 
     @staticmethod
     def validate_salary(vacancy):
-        if vacancy.get('salary') is not None:
-            if vacancy.get('salary').get('from') is None or vacancy.get('salary').get('from') == "":
-                return "Зарплата не указана"
-        else:
+        salary = vacancy.get('salary')
+        if not salary:
             return "Зарплата не указана"
+        salary_from = salary.get('from') or 0
+        salary_to = salary.get('to') or 0
+        return int((salary_from + salary_to) / 2) if salary_from or salary_to else "Зарплата не указана"
 
-        if vacancy.get('salary').get('to') == 0 or vacancy.get('salary').get('to') is None:
-            salary = f"{vacancy.get('salary').get('from')}"
-        else:
-            salary = int(vacancy.get('salary').get('from')) + int(vacancy.get('salary').get('to')) / 2
-        return int(salary)
+    @staticmethod
+    def remove_highlight_tags(description):
+        """
+        Убирает теги <highlighttext> из требований и обязанностей вакансии.
+        """
+        if isinstance(description, dict):
+            for key in ['requirement', 'responsibility']:
+                if description.get(key):
+                    description[key] = re.sub(r'<highlighttext>|</highlighttext>', '', description[key])
+        return description
+
+    @staticmethod
+    def cast_to_object_list(vacancies_data):
+        """Преобразует список вакансий из JSON в список объектов Vacancy."""
+        return [Vacancy(vacancy) for vacancy in vacancies_data]
 
     def __str__(self):
         return (f"Вакансия: {self.name}\n"
@@ -50,75 +63,23 @@ class Vacancy:
                 f"Требования: {self.description.get('requirement')}\n"
                 f"Обязанности: {self.description.get('responsibility')}")
 
+    def _get_comparable_salary(self):
+        return self.salary if isinstance(self.salary, int) else 0
+
     def __eq__(self, other):
-        """
-        Проверка равенства вакансий по зарплате.
-        """
-        if not isinstance(self, Vacancy):
-            return other.salary
-        elif not isinstance(other, Vacancy):
-            return self.salary
-        if self.salary == "Зарплата не указана":
-            self.salary = 0
-        elif other.salary == "Зарплата не указана":
-            other.salary = 0
-        return self.salary == other.salary
+        return self._get_comparable_salary() == other._get_comparable_salary()
 
     def __lt__(self, other):
-        """
-        Сравнение вакансий по зарплате.
-        """
-        if not isinstance(self, Vacancy):
-            return other.salary
-        elif not isinstance(other, Vacancy):
-            return self.salary
-        if self.salary == "Зарплата не указана":
-            self.salary = 0
-        elif other.salary == "Зарплата не указана":
-            other.salary = 0
-        return self.salary < other.salary
+        return self._get_comparable_salary() < other._get_comparable_salary()
 
     def __le__(self, other):
-        """
-        Сравнение вакансий по зарплате.
-        """
-        if not isinstance(self, Vacancy):
-            return other.salary
-        elif not isinstance(other, Vacancy):
-            return self.salary
-        if self.salary == "Зарплата не указана":
-            self.salary = 0
-        elif other.salary == "Зарплата не указана":
-            other.salary = 0
-        return self.salary <= other.salary
+        return self._get_comparable_salary() <= other._get_comparable_salary()
 
     def __gt__(self, other):
-        """
-        Сравнение вакансий по зарплате.
-        """
-        if not isinstance(self, Vacancy):
-            return other.salary
-        elif not isinstance(other, Vacancy):
-            return self.salary
-        if self.salary == "Зарплата не указана":
-            self.salary = 0
-        elif other.salary == "Зарплата не указана":
-            other.salary = 0
-        return self.salary > other.salary
+        return self._get_comparable_salary() > other._get_comparable_salary()
 
     def __ge__(self, other):
-        """
-        Сравнение вакансий по зарплате.
-        """
-        if not isinstance(self, Vacancy):
-            return other.salary
-        elif not isinstance(other, Vacancy):
-            return self.salary
-        if self.salary == "Зарплата не указана":
-            self.salary = 0
-        elif other.salary == "Зарплата не указана":
-            other.salary = 0
-        return self.salary >= other.salary
+        return self._get_comparable_salary() >= other._get_comparable_salary()
 
 
 if __name__ == "__main__":
