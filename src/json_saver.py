@@ -4,62 +4,70 @@ from src.abs_storage import AbstractStorage
 from src.vacancy import Vacancy
 from src.api_for_hh import HH
 import json
-from typing import Dict, Any
+from typing import List
 
 
 class JSONSaver(AbstractStorage):
     def __init__(self, file_path):
-        self.file_path = file_path
-        if not os.path.exists(self.file_path):
-            with open(self.file_path, 'w') as file:
+        self.__file_path = file_path
+
+        os.makedirs(os.path.dirname(self.__file_path), exist_ok=True)
+
+        if not os.path.exists(self.__file_path):
+            with open(self.__file_path, 'w') as file:
                 json.dump([], file)
 
-    def _load_data(self):
+    def load_data(self):
         """ Внутренний метод для загрузки данных из JSON-файла."""
         try:
-            with open(self.file_path, 'r', encoding='utf-8') as file:
-                return json.load(file)
+            with open(self.__file_path, 'r', encoding='utf-8') as file:
+                return json.load(file) or []
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Нельзя открыть файл из-за ошибки {e}")
             return []
 
-    def _save_data(self, data):
+    def save_data(self, data):
         """Внутренний метод для сохранения данных в JSON-файл."""
-        with open(self.file_path, 'w', encoding='utf-8') as file:
+        with open(self.__file_path, 'w', encoding='utf-8') as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
     def add_vacancy(self, vacancy: Vacancy):
         """Метод добавляет вакансию в JSON-файл."""
-        data = self._load_data()
-        data.append(vacancy.__dict__)
-        self._save_data(data)
+        data = self.load_data()
+        vacancy_dict = vacancy.to_dict()
 
-    def get_vacancies(self, criteria: str):
+        if vacancy_dict not in data:
+            data.append(vacancy_dict)
+            self.save_data(data)
+
+    def get_vacancies(self, criteria: List[str]):
         """Получает список вакансий, соответствующих заданным критериям."""
-        data = self._load_data()
+        data = self.load_data()
         matching_vacancies = []
 
         for vacancy in data:
-            if any(keyword.lower() in vacancy.get('Вакансия', '').lower() or
-                   keyword.lower() in vacancy.get('Наниматель', {}).lower() or
-                   keyword.lower() in vacancy.get('Требования', '').lower() or
-                   keyword.lower() in vacancy.get('Обязанности', '').lower()
-                   for keyword in criteria):
-                matching_vacancies.append(data)
+            if any(
+                    keyword.lower() in (vacancy.get('name') or "").lower() or
+                    keyword.lower() in (vacancy.get('employer') or "").lower() or
+                    keyword.lower() in (vacancy.get('description').get('requirement') or "").lower() or
+                    keyword.lower() in (vacancy.get('description').get('responsibility') or "").lower()
+                    for keyword in criteria):
+                matching_vacancies.append(vacancy)
 
         return matching_vacancies
 
     def delete_vacancy(self, vacancy: Vacancy):
         """ Удаляет вакансию из JSON-файла, если она существует."""
-        data = self._load_data()
-        data = [v for v in data if v != vacancy]
-        self._save_data(data)
+        data = self.load_data()
+        data = [v for v in data if v != vacancy.to_dict()]
+        self.save_data(data)
 
 
 if __name__ == "__main__":
     hh = HH()
     hh.load_vacancies("developer")
-    vac = Vacancy(hh.vacancies[-1])
+    vac = Vacancy.cast_to_object_list(hh.vacancies)
     print(vac)
     saver = JSONSaver("data/worker.json")
-    saver.add_vacancy(vac)
+    for vacancy in vac:
+        saver.add_vacancy(vacancy)
