@@ -34,15 +34,17 @@ class JSONSaver(AbstractStorage):
         data.append(vacancy.__dict__)
         self._save_data(data)
 
-    def get_vacancies(self, criteria: Dict[str, Any]):
+    def get_vacancies(self, criteria: str):
         """Получает список вакансий, соответствующих заданным критериям."""
         data = self._load_data()
         matching_vacancies = []
 
         for vacancy in data:
-            match = all(vacancy.get(key) == value for key, value in criteria.items())
-            if match:
-                matching_vacancies.append(vacancy)
+            if (criteria.lower() in vacancy.get('Вакансия', '').lower() or
+                    criteria.lower() in vacancy.get('Наниматель', {}).lower() or
+                    criteria.lower() in vacancy.get('Требования', '').lower() or
+                    criteria.lower() in vacancy.get('Обязанности', '').lower()):
+                matching_vacancies.append(data)
 
         return matching_vacancies
 
