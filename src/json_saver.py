@@ -40,10 +40,11 @@ class JSONSaver(AbstractStorage):
         matching_vacancies = []
 
         for vacancy in data:
-            if (criteria.lower() in vacancy.get('Вакансия', '').lower() or
-                    criteria.lower() in vacancy.get('Наниматель', {}).lower() or
-                    criteria.lower() in vacancy.get('Требования', '').lower() or
-                    criteria.lower() in vacancy.get('Обязанности', '').lower()):
+            if any(keyword.lower() in vacancy.get('Вакансия', '').lower() or
+                   keyword.lower() in vacancy.get('Наниматель', {}).lower() or
+                   keyword.lower() in vacancy.get('Требования', '').lower() or
+                   keyword.lower() in vacancy.get('Обязанности', '').lower()
+                   for keyword in criteria):
                 matching_vacancies.append(data)
 
         return matching_vacancies
